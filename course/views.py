@@ -5,7 +5,6 @@ from rest_framework.permissions import IsAuthenticated
 from course.models import Course, Lesson, Payments
 from course.permissions import IsModerator, IsOwner
 from course.serializers import CourseSerializer, LessonSerializer, PaymentsSerializers
-from users.models import UserRoles
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -16,7 +15,8 @@ class CourseViewSet(viewsets.ModelViewSet):
 
 class LessonCreateAPIView(generics.CreateAPIView):
     serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated, IsModerator]
+    queryset = Lesson.objects.all()
+    permission_classes = [IsModerator | IsOwner]
 
 
 class LessonListAPIView(generics.ListAPIView):
@@ -28,7 +28,7 @@ class LessonListAPIView(generics.ListAPIView):
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [IsAuthenticated, IsModerator]
+    permission_classes = [IsModerator | IsOwner]
 
 
 class LessonUpdateAPIView(generics.UpdateAPIView):
@@ -37,11 +37,9 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
     permission_classes = [IsModerator | IsOwner]
 
 
-
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
-    permission_classes = [IsOwner]
-
+    permission_classes = [IsModerator | IsOwner]
 
 
 class PaymentsListView(generics.ListAPIView):

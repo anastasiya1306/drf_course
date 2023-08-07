@@ -6,13 +6,13 @@ from users.models import User, UserRoles
 class Command(BaseCommand):
     def handle(self, *args, **options):
         user = User.objects.create(
-            email='test@skypro.com',
-            first_name='admin',
-            last_name='admin',
+            email='vinston768@gmail.com',
+            first_name='skypro',
+            last_name='test',
             is_staff=False,
             is_superuser=False,
             is_active=True,
-            role=UserRoles.MEMBER,
+            role=UserRoles.MODERATOR,
         )
-        user.set_password('abc123def')
+        user.set_password('abc123def456')
         user.save()
