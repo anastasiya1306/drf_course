@@ -10,13 +10,13 @@ from course.serializers import CourseSerializer, LessonSerializer, PaymentsSeria
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
-    permission_classes = [IsAuthenticated | IsModerator | IsOwner]
+    permission_classes = [IsModerator | IsOwner]
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [IsModerator | IsOwner]
+    permission_classes = [IsModerator]
 
 
 class LessonListAPIView(generics.ListAPIView):
@@ -34,12 +34,12 @@ class LessonRetrieveAPIView(generics.RetrieveAPIView):
 class LessonUpdateAPIView(generics.UpdateAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [IsModerator | IsOwner]
+    permission_classes = [IsOwner]
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
-    permission_classes = [IsModerator | IsOwner]
+    permission_classes = [IsModerator]
 
 
 class PaymentsListView(generics.ListAPIView):
