@@ -71,7 +71,6 @@ class PaymentsCreateView(generics.CreateAPIView):
             course=serializer.validated_data['course'],
             user=self.request.user
         )
-        serializer.save()
         create_payment(course=serializer.validated_data['course'],
                        user=self.request.user)
         return Response(session['id'], status=status.HTTP_201_CREATED)
