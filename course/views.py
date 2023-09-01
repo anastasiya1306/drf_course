@@ -4,7 +4,7 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 import stripe
-
+from course.tasks import send_email
 from config import settings
 from course.models import Course, Lesson, Payments
 from course.paginators import Pagination
@@ -12,13 +12,19 @@ from course.permissions import IsModerator, IsOwner
 from course.serializers import CourseSerializer, LessonSerializer, PaymentsSerializers, SubscriptionSerializer, \
     PaymentCreateSerializer
 from course.services import checkout_session, create_payment
+
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
 
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     pagination_class = Pagination
     queryset = Course.objects.all()
     permission_classes = [IsModerator | IsOwner]
+
+    def update(self, request, *args, **kwargs):
+        send_email.delay(kwargs['pk'])
+        return super().update(request, *args, **kwargs)
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
@@ -84,4 +90,3 @@ class SubscriptionCreateAPIView(generics.CreateAPIView):
 class SubscriptionDestroyAPIView(generics.DestroyAPIView):
     serializer_class = SubscriptionSerializer
     queryset = Lesson.objects.all()
-
