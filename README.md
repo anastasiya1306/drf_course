@@ -1,3 +1,20 @@
+### Инструкция по запуску проекта
+#### 1. Создать и активировать виртуальное окружение
+#### 2. Установить зависимости проекта 
+pip install -r requirements.txt
+#### 3. Выполнить миграции
+python manage.py migrate
+#### 4. Загрузить данные
+python manage.py loaddata db.json
+
+python manage.py loaddata db1.json
+#### 5. Установить redis
+#### 6. Запустить сервер
+python manage.py runserver
+#### 7. Запустить celery
+celery -A config worker -l INFO -P eventlet
+#### 8. Запустить celery-beat
+celery -A config beat -l info -S django
 ### Задание 1
 Создайте новый Django-проект, подключите DRF и внесите все необходимые настройки.
 
