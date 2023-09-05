@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework_simplejwt',
     'drf_yasg',
+    'django_celery_beat'
 ]
 
 MIDDLEWARE = [
@@ -112,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -148,3 +149,22 @@ SIMPLE_JWT = {
 }
 
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+
+# Настройки для Celery
+CELERY_BROKER_URL = 'redis://localhost:6379'  # URL-адрес брокера сообщений, например Redis
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'  # URL-адрес брокера результатов, также Redis
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_TIMEZONE = 'Europe/Moscow'
+
+CELERY_BEAT_SCHEDULE = {
+    'task-name': {
+        'task': 'course.tasks.check_user',
+        'schedule': timedelta(minutes=1),
+    },
+}
+
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_SSL = True
