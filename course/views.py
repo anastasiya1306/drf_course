@@ -1,12 +1,18 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, status
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+import stripe
+
+from config import settings
 from course.models import Course, Lesson, Payments
 from course.paginators import Pagination
 from course.permissions import IsModerator, IsOwner
-from course.serializers import CourseSerializer, LessonSerializer, PaymentsSerializers, SubscriptionSerializer
-
+from course.serializers import CourseSerializer, LessonSerializer, PaymentsSerializers, SubscriptionSerializer, \
+    PaymentCreateSerializer
+from course.services import checkout_session, create_payment
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
@@ -54,8 +60,20 @@ class PaymentsListView(generics.ListAPIView):
 
 
 class PaymentsCreateView(generics.CreateAPIView):
-    serializer_class = PaymentsSerializers
+    serializer_class = PaymentCreateSerializer
     queryset = Payments.objects.all()
+
+    def post(self, request, *args, **kwargs):
+        """Создание платежа"""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        session = checkout_session(
+            course=serializer.validated_data['course'],
+            user=self.request.user
+        )
+        create_payment(course=serializer.validated_data['course'],
+                       user=self.request.user)
+        return Response(session['id'], status=status.HTTP_201_CREATED)
 
 
 class SubscriptionCreateAPIView(generics.CreateAPIView):
@@ -66,3 +84,4 @@ class SubscriptionCreateAPIView(generics.CreateAPIView):
 class SubscriptionDestroyAPIView(generics.DestroyAPIView):
     serializer_class = SubscriptionSerializer
     queryset = Lesson.objects.all()
+
