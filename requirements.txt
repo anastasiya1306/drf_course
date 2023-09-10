@@ -8,10 +8,14 @@ sqlparse==0.4.4
 tzdata==2023.3
 drf-yasg
 redis
+django-celery-beat
 celery
 PyJWT
 python-dotenv
 djangorestframework-simplejwt
+eventlet
 prompt-toolkit
 django-filter
 django-timezone-field
+stripe
+python-dotenv
