@@ -17,12 +17,24 @@ services:
       timeout: 5s
       retries: 5
 
+  run_migrations:
+    build: .
+    env_file: ./.env
+    environment:
+      DB_HOST: db
+    depends_on:
+      db:
+        condition: service_healthy
+    command: python manage.py migrate
+
   backend:
     build: .
     container_name: backend
     depends_on:
       db:
         condition: service_healthy
+      run_migrations:
+        condition: service_completed_successfully
     command: >
       bash -c "python manage.py collectstatic --noinput
       && python manage.py makemigrations
