@@ -84,9 +84,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('NAME_DB'),
-        'USER': os.getenv('USER_DB'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'NAME': 'drf_project',
+        'USER': 'postgres',
+        'PASSWORD': 'simba2106',
+        'HOST': 'db',
+        'PORT': '5432'
     }
 }
 
@@ -151,8 +153,8 @@ SIMPLE_JWT = {
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 
 # Настройки для Celery
-CELERY_BROKER_URL = 'redis://localhost:6379'  # URL-адрес брокера сообщений, например Redis
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'  # URL-адрес брокера результатов, также Redis
+CELERY_BROKER_URL = 'redis://redis:6379/0'  # URL-адрес брокера сообщений, например Redis
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'  # URL-адрес брокера результатов, также Redis
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 CELERY_TIMEZONE = 'Europe/Moscow'
 
@@ -168,3 +170,5 @@ EMAIL_PORT = 465
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_SSL = True
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
